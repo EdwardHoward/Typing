@@ -1,4 +1,4 @@
-.word{
+.word {
    padding: .5rem;
    display: inline-block;
    font-size: 1.5rem;
@@ -9,35 +9,42 @@
    }
 
    &.correct {
-      color: #3cde3c;//#66ff66; 
+      color: #3cde3c; //#66ff66; 
    }
 
-   &.wrong{
+   &.wrong {
       color: #ff1a1a;
    }
 
-   &.error{
+   &.error {
       background: #ff9999;
       color: #ff1a1a;
    }
 }
 
-input{
-   
+input {
+   font-size: 1.5rem;
+   border: none;
+   padding: .5rem;
 }
 
-.words{
+.words {
    padding: 1rem;
+   width: 900px;
 }
 
-.words-container{
-   height: 110px;
-   overflow: hidden;
+.words-container {
    background: white;
    display: inline-block;
+   border-radius: 5px;
+   border-bottom-left-radius: 0px;
+   border-bottom-right-radius: 0px;
 }
 
-.toolbar{
+.toolbar {
    padding: 1rem;
    background: #eee;
+   border-bottom-left-radius: 5px;
+   border-bottom-right-radius: 5px;
+   display: flex;
 }

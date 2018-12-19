@@ -135,7 +135,8 @@ export default class Typing extends React.Component<TypingProps, any> {
             characterCount: 0,
             running: false,
             finished: false,
-            currentTime: 60
+            currentTime: 60,
+            wrongCount: 0
          }
       )
 
@@ -157,7 +158,7 @@ export default class Typing extends React.Component<TypingProps, any> {
    public render() {
       const wd = Math.floor((Math.max(0, this.state.current)) / 10);
       const start = wd * 10;
-      const w = words.slice(start, start + 30);
+      const w = words.slice(start, start + 20);
 
       return (
          <div style={{ textAlign: 'center' }}>
@@ -185,10 +186,10 @@ export default class Typing extends React.Component<TypingProps, any> {
                   <Timer currentTime={this.state.currentTime} onFinished={this.onFinished} counting={this.state.running} onTick={this.tick} />
                   <button onClick={this.reset}>Reset</button>
                </div>
-               <div className="time">
-                  <span className="time">{this.state.characterCount}</span>
-                  <span className="time">{this.state.wrongCount}</span>
-                  <span className="time">{this.state.wordsPerMinute} WPM</span>
+               <div className="p-1">
+                  <span className="p-1">{this.state.characterCount}</span>
+                  <span className="p-1">{this.state.wrongCount}</span>
+                  <span className="p-1">{this.state.wordsPerMinute} WPM</span>
                </div>
             </div>
          </div>

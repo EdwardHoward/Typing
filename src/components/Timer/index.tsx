@@ -57,7 +57,7 @@ export default class Timer extends React.Component<TimerProps, any> {
 
    public render() {
       return (
-         <span className="time">
+         <span className="p-1 time">
             {this.renderTime()}
          </span>
       );
