@@ -1,0 +1,43 @@
+.word{
+   padding: .5rem;
+   display: inline-block;
+   font-size: 1.5rem;
+   border-radius: 5px;
+
+   &.current {
+      background: #f1f1f1;
+   }
+
+   &.correct {
+      color: #3cde3c;//#66ff66; 
+   }
+
+   &.wrong{
+      color: #ff1a1a;
+   }
+
+   &.error{
+      background: #ff9999;
+      color: #ff1a1a;
+   }
+}
+
+input{
+   
+}
+
+.words{
+   padding: 1rem;
+}
+
+.words-container{
+   height: 110px;
+   overflow: hidden;
+   background: white;
+   display: inline-block;
+}
+
+.toolbar{
+   padding: 1rem;
+   background: #eee;
+}
