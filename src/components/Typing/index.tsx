@@ -1,11 +1,12 @@
 import * as React from 'react';
 import './typing.style';
-import { Words, shuffle } from './words';
-import Timer from '../Timer';
 
-let words = shuffle(Words.split(/\n/g));
+import Timer from '../Timer';
+import Words from '../Words';
+import { shuffle } from './words';
 
 export interface TypingProps {
+   words: string
 }
 
 export interface TypingState {
@@ -20,6 +21,7 @@ export interface TypingState {
    currentTime: number;
    wrongCount: number;
    wordsPerMinute: number;
+   words: string[]
 }
 
 export default class Typing extends React.Component<TypingProps, any> {
@@ -39,7 +41,8 @@ export default class Typing extends React.Component<TypingProps, any> {
          finished: false,
          currentTime: 60,
          wrongCount: 0,
-         wordsPerMinute: 0
+         wordsPerMinute: 0,
+         words: shuffle(this.props.words.split(/\n/g))
       }
    }
 
@@ -50,7 +53,7 @@ export default class Typing extends React.Component<TypingProps, any> {
    onSpace = () => {
       let correct = false;
 
-      if (this.state.inputValue.trim() === words[this.state.current].trim()) {
+      if (this.state.inputValue.trim() === this.state.words[this.state.current].trim()) {
          correct = true;
       }
 
@@ -87,21 +90,21 @@ export default class Typing extends React.Component<TypingProps, any> {
 
          const letter = val.substr(-1, 1);
 
-         if (words[state.current].substring(0, val.length) === val.trim()) {
-            if (this.isLetter(letter, false)) {
-               characterCount += 1;
-            }
+         if (this.isLetter(letter, false)) {
+            characterCount += 1;
+         }
 
-            if (this.isLetter(letter, true)) {
-               characterCount += 2;
-            }
-         } else {
+         if (this.isLetter(letter, true)) {
+            characterCount += 2;
+         }
+
+         if (this.state.words[state.current].substring(0, val.length) !== val.trim()) {
             wrongCount++;
          }
 
          return {
             inputValue: val,
-            currentWrong: words[state.current].substring(0, val.length) !== val.trim(),
+            currentWrong: this.state.words[state.current].substring(0, val.length) !== val.trim(),
             running: true,
             characterCount,
             wrongCount,
@@ -123,8 +126,6 @@ export default class Typing extends React.Component<TypingProps, any> {
    }
 
    reset = () => {
-      words = shuffle(Words.split(/\n/g));
-
       this.setState(
          {
             current: 0,
@@ -136,7 +137,8 @@ export default class Typing extends React.Component<TypingProps, any> {
             running: false,
             finished: false,
             currentTime: 60,
-            wrongCount: 0
+            wrongCount: 0,
+            words: shuffle(this.props.words.split(/\n/g))
          }
       )
 
@@ -156,40 +158,26 @@ export default class Typing extends React.Component<TypingProps, any> {
    }
 
    public render() {
-      const wd = Math.floor((Math.max(0, this.state.current)) / 10);
-      const start = wd * 10;
-      const w = words.slice(start, start + 20);
-
       return (
          <div style={{ textAlign: 'center' }}>
             <div style={{ display: 'inline-block', textAlign: 'left', transform: 'translateY(50%)' }}>
-               <div className="words-container">
-                  <div className="words">
-                     {w.map((word, index) =>
-                        <React.Fragment>
-                           <span key={index}
-                              className={
-                                 'word' +
-                                 ((index + start) == this.state.current ? (' current' + (this.state.currentWrong ? ' error' : '')) : '') +
-                                 (this.state.test[index + start] === true ? ' correct' : '') +
-                                 (this.state.test[index + start] === false ? ' wrong' : '')
-                              }>
-                              {word}
-                           </span>
-                           {(index + 1) % 10 == 0 && <br />}
-                        </React.Fragment>
-                     )}
+               <div style={{ boxShadow: '1px 1px 4px #0000002b', borderRadius: '5px' }}>
+                  <Words
+                     words={this.state.words}
+                     current={this.state.current}
+                     currentWrong={this.state.currentWrong}
+                     test={this.state.test}
+                  />
+                  <div className="toolbar">
+                     <input style={this.state.currentWrong ? { color: 'red' } : {}} onChange={this.handleChange} value={this.state.inputValue} ref={this.saveInput} />
+                     <Timer currentTime={this.state.currentTime} onFinished={this.onFinished} counting={this.state.running} onTick={this.tick} />
+                     <button onClick={this.reset}>Reset</button>
                   </div>
                </div>
-               <div className="toolbar">
-                  <input style={this.state.currentWrong ? { color: 'red' } : {}} onChange={this.handleChange} value={this.state.inputValue} ref={this.saveInput} />
-                  <Timer currentTime={this.state.currentTime} onFinished={this.onFinished} counting={this.state.running} onTick={this.tick} />
-                  <button onClick={this.reset}>Reset</button>
-               </div>
                <div className="p-1">
-                  <span className="p-1">{this.state.characterCount}</span>
-                  <span className="p-1">{this.state.wrongCount}</span>
-                  <span className="p-1">{this.state.wordsPerMinute} WPM</span>
+                  <span className="p-1">Keystrokes: <span className="correct">{this.state.characterCount}</span></span>
+                  <span className="p-1">Wrong: <span className="wrong">{this.state.wrongCount}</span></span>
+                  <span className="p-1">WPM: {this.state.wordsPerMinute}</span>
                </div>
             </div>
          </div>

@@ -1,4 +1,4 @@
-export const Words = 
+export const WordList = 
 `the
 he
 be

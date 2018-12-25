@@ -8,29 +8,37 @@
       background: #f1f1f1;
    }
 
-   &.correct {
-      color: #3cde3c; //#66ff66; 
-   }
-
-   &.wrong {
-      color: #ff1a1a;
-   }
-
    &.error {
       background: #ff9999;
       color: #ff1a1a;
    }
 }
 
+.wrong {
+   color: #ff1a1a;
+}
+
+.correct {
+   color: #3cde3c; //#66ff66; 
+}
+
 input {
    font-size: 1.5rem;
    border: none;
    padding: .5rem;
+   flex-grow: 1;
 }
 
 .words {
+   position: relative;
+}
+
+.words-wrapper {
    padding: 1rem;
-   width: 900px;
+   background: white;
+   max-width: 800px;
+   border-top-left-radius: 4px;
+   border-top-right-radius: 4px;
 }
 
 .words-container {
@@ -39,6 +47,8 @@ input {
    border-radius: 5px;
    border-bottom-left-radius: 0px;
    border-bottom-right-radius: 0px;
+   height: 6rem;
+   overflow: hidden;
 }
 
 .toolbar {
