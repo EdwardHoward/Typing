@@ -1,0 +1,83 @@
+# Javascript Node CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+#
+version: 2
+orbs:
+  aws-s3: circleci/aws-s3@1.0.0
+jobs:
+  build:
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:8.12
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/mongo:3.4.4
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "web/yarn.lock" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - run: |
+          cd web
+          yarn install --frozen-lockfile
+
+      - save_cache:
+          paths:
+            - web/node_modules
+          key: v1-dependencies-{{ checksum "web/yarn.lock" }}
+
+      # run tests!
+      - run: |
+          cd web
+          yarn test
+
+      # build
+      - run: |
+          cd web
+          yarn build
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - web/build
+
+  deploy-staging:
+    docker:
+      - image: circleci/python:2.7-jessie
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "web/yarn.lock" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+      - aws-s3/copy:
+          from: .
+          to: 's3://edwardhoward-circleci'
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build
+      - deploy-staging:
+          requires:
+            - build
+          filters:
+            branches:
+              only: dev
+          s3-bucket-name: AWS_BUCKET_NAME
