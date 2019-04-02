@@ -2,7 +2,7 @@
 #
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
-version: 2
+version: 2.1
 orbs:
   aws-s3: circleci/aws-s3@1.0.0
 jobs:
@@ -64,7 +64,7 @@ jobs:
           to: $S3_BUCKET
 
 workflows:
-  version: 2
+  version: 2.1
   build-deploy:
     jobs:
       - build
