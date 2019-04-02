@@ -28,7 +28,7 @@ jobs:
 
       - run: |
           cd web
-          yarn install --frozen-lockfile
+          npm install
 
       - save_cache:
           paths:
