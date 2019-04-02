@@ -169,7 +169,15 @@ export default class Typing extends React.Component<TypingProps, any> {
                      test={this.state.test}
                   />
                   <div className="toolbar">
-                     <input style={this.state.currentWrong ? { color: 'red' } : {}} onChange={this.handleChange} value={this.state.inputValue} ref={this.saveInput} />
+                     <input 
+                        style={this.state.currentWrong ? { color: 'red' } : {}} 
+                        onChange={this.handleChange} 
+                        value={this.state.inputValue} 
+                        ref={this.saveInput}
+                        autoCorrect="off"
+                        autoCapitalize="off"
+                        spellCheck={false}
+                     />
                      <span className="toolbar-actions">
                         <Timer currentTime={this.state.currentTime} onFinished={this.onFinished} counting={this.state.running} onTick={this.tick} />
                         <button onClick={this.reset}>Reset</button>
