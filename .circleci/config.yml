@@ -15,6 +15,7 @@ jobs:
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
       # - image: circleci/mongo:3.4.4
+      working_directory: ~/repo
 
     steps:
       - checkout
@@ -39,17 +40,18 @@ jobs:
           npm run build
 
       - persist_to_workspace:
-          root: .
+          root: dist
           paths:
-            - build
+            - ./
 
   deploy-staging:
     docker:
       - image: circleci/python:2.7-jessie
+    working_directory: ~/repo
     steps:
       - checkout
       - attach_workspace:
-          at: .
+          at: ~/repo
 
       - restore_cache:
           keys:
@@ -57,8 +59,8 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
       - aws-s3/copy:
-          from: .
-          to: 's3://edwardhoward-circleci'
+          from: ~/repo
+          to: $S3_BUCKET
 
 workflows:
   version: 2
