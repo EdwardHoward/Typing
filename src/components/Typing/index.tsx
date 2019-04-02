@@ -4,6 +4,7 @@ import './typing.style';
 import Timer from '../Timer';
 import Words from '../Words';
 import { shuffle } from './words';
+import { Results } from '../Results';
 
 export interface TypingProps {
    words: string
@@ -160,8 +161,8 @@ export default class Typing extends React.Component<TypingProps, any> {
    public render() {
       return (
          <div style={{ textAlign: 'center' }}>
-            <div style={{ display: 'inline-block', textAlign: 'left', transform: 'translateY(50%)' }}>
-               <div style={{ boxShadow: '1px 1px 4px #0000002b', borderRadius: '5px' }}>
+            <div style={{ display: 'inline-block', textAlign: 'left', transform: 'translateY(50%)', boxShadow: '1px 1px 4px #0000002b', borderRadius: "5px" }}>
+               <div>
                   <Words
                      words={this.state.words}
                      current={this.state.current}
@@ -184,11 +185,11 @@ export default class Typing extends React.Component<TypingProps, any> {
                      </span>
                   </div>
                </div>
-               <div className="p-1" style={{display: 'flex', flexWrap: 'wrap'}}>
-                  <span className="p-1">Keystrokes: <span className="correct">{this.state.characterCount}</span></span>
-                  <span className="p-1">Wrong: <span className="wrong">{this.state.wrongCount}</span></span>
-                  <span className="p-1">WPM: {this.state.wordsPerMinute}</span>
-               </div>
+               <Results 
+                  keystrokes={this.state.characterCount} 
+                  wrong={this.state.wrongCount} 
+                  wpm={this.state.wordsPerMinute} 
+               />
             </div>
          </div>
       );
