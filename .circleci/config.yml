@@ -27,7 +27,6 @@ jobs:
             - v1-dependencies-
 
       - run: |
-          cd web
           npm install
 
       - save_cache:
@@ -37,7 +36,6 @@ jobs:
 
       # build
       - run: |
-          cd web
           npm run build
 
       - persist_to_workspace:
