@@ -1,6 +1,11 @@
-# Webpack Typescript Project
+# Typing
+
+A typing test written in React
 
 [![CircleCI](https://circleci.com/gh/EdwardHoward/Typing/tree/master.svg?style=svg)](https://circleci.com/gh/EdwardHoward/Typing/tree/master)
+
+## Demo
+[Demo](https://edwardhoward.io)
 
 ## Development
 
