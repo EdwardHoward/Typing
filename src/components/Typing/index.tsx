@@ -5,7 +5,6 @@ import Timer from '../Timer';
 import Words from '../Words';
 import { Results } from '../Results';
 import IWordsClient from '../../api/words/IWordsClient';
-import { Results } from '../Results';
 
 export interface TypingProps {
    words: string;
