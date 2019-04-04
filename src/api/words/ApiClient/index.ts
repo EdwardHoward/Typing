@@ -12,7 +12,7 @@ export default class APIWordsClient implements IWordsClient{
    }
 
    checkWords(words: string, backspaceCount: number){
-      return new Promise<string>(async (resolve, reject) => {
+      return new Promise<WordsResult>(async (resolve, reject) => {
          let res = await axios(`${process.env.API_URL}/check`, {
             method: 'post',
             withCredentials: true,
