@@ -1,4 +1,4 @@
-import IWordsClient from "../IWordsClient";
+import IWordsClient, { WordsResult } from "../IWordsClient";
 import axios from 'axios';
 
 export default class APIWordsClient implements IWordsClient{

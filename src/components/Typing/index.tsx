@@ -43,7 +43,7 @@ export default class Typing extends React.Component<TypingProps, any> {
          characterCount: 0,
          running: false,
          finished: false,
-         currentTime: 60,
+         currentTime: 10,
          wrongCount: 0,
          wordsPerMinute: 0,
          words: []//shuffle(this.props.words.split(/\n/g))
@@ -135,7 +135,11 @@ export default class Typing extends React.Component<TypingProps, any> {
          }
       });
 
+      userInput += this.state.inputValue;
+
       let check = await this.props.wordClient.checkWords(userInput, backspaceCount);
+
+      this.setState({wordsPerMinute: check.wpm, wrong: check.wrong});
    }
 
    reset = async () => {

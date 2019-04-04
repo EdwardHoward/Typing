@@ -1,3 +1,4 @@
+import { WordsResult } from './../IWordsClient';
 import { WordList, shuffle } from './words';
 import IWordsClient from "../IWordsClient";
 
@@ -9,8 +10,8 @@ export default class MockWordsClient implements IWordsClient {
    }
 
    checkWords(words: string, backspaceCount: number){
-      return new Promise<string>((resolve, reject) => {
-         resolve('');
+      return new Promise<WordsResult>((resolve, reject) => {
+         resolve({wpm: 0, wrong: 0});
       });
    }
 }
