@@ -7,8 +7,7 @@ import { Results } from '../Results';
 import IWordsClient from '../../api/words/IWordsClient';
 
 export interface TypingProps {
-   words: string;
-   wordClient: IWordsClient
+   client: IWordsClient
 }
 
 export interface TypingState {
@@ -46,12 +45,12 @@ export default class Typing extends React.Component<TypingProps, any> {
          currentTime: 10,
          wrongCount: 0,
          wordsPerMinute: 0,
-         words: []//shuffle(this.props.words.split(/\n/g))
+         words: []
       }
    }
 
    async componentDidMount() {
-      let words = await this.props.wordClient.getWords();
+      let words = await this.props.client.getWords();
       this.setState({ words });
       this.input.focus();
    }
@@ -137,13 +136,13 @@ export default class Typing extends React.Component<TypingProps, any> {
 
       userInput += this.state.inputValue;
 
-      let check = await this.props.wordClient.checkWords(userInput, backspaceCount);
+      let check = await this.props.client.checkWords(userInput, backspaceCount);
 
       this.setState({wordsPerMinute: check.wpm, wrong: check.wrong});
    }
 
    reset = async () => {
-      let words = await this.props.wordClient.getWords();
+      let words = await this.props.client.getWords();
 
       this.setState(
          {

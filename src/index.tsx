@@ -23,7 +23,7 @@ if(process.env.SERVICE_TYPE === "api"){
 
 ReactDOM.render(
    <Provider store={store}>
-      <Typing wordClient={client} words={WordList} />
+      <Typing client={client} />
    </Provider>, 
    document.getElementById('root')
 );
