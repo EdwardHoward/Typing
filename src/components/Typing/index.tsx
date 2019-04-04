@@ -42,7 +42,7 @@ export default class Typing extends React.Component<TypingProps, any> {
          characterCount: 0,
          running: false,
          finished: false,
-         currentTime: 10,
+         currentTime: 60,
          wrongCount: 0,
          wordsPerMinute: 0,
          words: []
