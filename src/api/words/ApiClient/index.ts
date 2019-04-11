@@ -1,8 +1,9 @@
+import { WordsType } from './../IWordsClient';
 import IWordsClient, { WordsResult } from "../IWordsClient";
 import axios from 'axios';
 
 export default class APIWordsClient implements IWordsClient{
-   getWords(){
+   getWords(type: WordsType){
       return new Promise<string[]>(async (resolve, reject) => {
          let res = await axios(process.env.API_URL, {withCredentials: true});
 

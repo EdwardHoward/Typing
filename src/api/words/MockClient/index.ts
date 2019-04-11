@@ -1,12 +1,17 @@
-import { WordsResult } from './../IWordsClient';
-import { WordList, shuffle } from './words';
+import { WordsResult, WordsType } from './../IWordsClient';
+import { WordList, shuffle, passage } from './words';
 import IWordsClient from "../IWordsClient";
 
 let currentWords;
 export default class MockWordsClient implements IWordsClient {
-   getWords() {
+   getWords(type: WordsType) {
       return new Promise<string[]>((resolve, reject) => {
-         currentWords = shuffle(WordList.split(/\n/g));
+         if(type == WordsType.WORDS){
+            currentWords = shuffle(WordList.split(/\n/g));
+         }else if(type == WordsType.PASSAGE){
+            currentWords = passage.split(/\s/g);
+         }
+
          resolve(currentWords);
       });
    }

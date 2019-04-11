@@ -4,7 +4,8 @@ import './typing.style';
 import Timer from '../Timer';
 import Words from '../Words';
 import { Results } from '../Results';
-import IWordsClient from '../../api/words/IWordsClient';
+import IWordsClient, { WordsType } from '../../api/words/IWordsClient';
+import { Picker } from '../Picker';
 
 export interface TypingProps {
    client: IWordsClient
@@ -45,12 +46,13 @@ export default class Typing extends React.Component<TypingProps, any> {
          currentTime: 60,
          wrongCount: 0,
          wordsPerMinute: 0,
-         words: []
+         words: [],
+         type: WordsType.WORDS
       }
    }
 
    async componentDidMount() {
-      let words = await this.props.client.getWords();
+      let words = await this.props.client.getWords(this.state.type);
       this.setState({ words });
       this.input.focus();
    }
@@ -87,7 +89,7 @@ export default class Typing extends React.Component<TypingProps, any> {
    }
 
    handleKeyDown = (e) => {
-      if(e.which === 8){
+      if (e.which === 8) {
          backspaceCount++;
       }
    }
@@ -138,11 +140,11 @@ export default class Typing extends React.Component<TypingProps, any> {
 
       let check = await this.props.client.checkWords(userInput, backspaceCount);
 
-      this.setState({wordsPerMinute: check.wpm, wrong: check.wrong});
+      this.setState({ wordsPerMinute: check.wpm, wrong: check.wrong });
    }
 
-   reset = async () => {
-      let words = await this.props.client.getWords();
+   reset = async (type = this.state.type) => {
+      let words = await this.props.client.getWords(type);
 
       this.setState(
          {
@@ -171,6 +173,10 @@ export default class Typing extends React.Component<TypingProps, any> {
       })
    }
 
+   handlePick = (e) => {
+      this.reset(e);
+   }
+
    saveInput = (node) => {
       this.input = node;
    }
@@ -179,6 +185,9 @@ export default class Typing extends React.Component<TypingProps, any> {
       return (
          <div style={{ textAlign: 'center' }}>
             <div style={{ display: 'inline-block', textAlign: 'left', transform: 'translateY(50%)', boxShadow: '1px 1px 4px #0000002b', borderRadius: "5px" }}>
+               <div style={{ padding: '1rem', background: 'rgb(238, 238, 238)', borderTopRightRadius: '5px', borderTopLeftRadius: '5px' }}>
+                  <Picker onPick={this.handlePick} options={[]} />
+               </div>
                <div>
                   <Words
                      words={this.state.words}
@@ -203,10 +212,10 @@ export default class Typing extends React.Component<TypingProps, any> {
                      </span>
                   </div>
                </div>
-               <Results 
-                  keystrokes={this.state.characterCount} 
-                  wrong={this.state.wrongCount} 
-                  wpm={this.state.wordsPerMinute} 
+               <Results
+                  keystrokes={this.state.characterCount}
+                  wrong={this.state.wrongCount}
+                  wpm={this.state.wordsPerMinute}
                />
             </div>
          </div>

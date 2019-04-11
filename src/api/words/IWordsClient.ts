@@ -3,7 +3,12 @@ export interface WordsResult {
    wrong: number;
 }
 
+export enum WordsType {
+   WORDS = "words",
+   PASSAGE = "passage"
+}
+
 export default interface IWordsClient {
-   getWords():Promise<string[]>;
+   getWords(type: WordsType):Promise<string[]>;
    checkWords(words: string, backspaceCount: number):Promise<WordsResult>;
 }
