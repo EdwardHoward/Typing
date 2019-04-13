@@ -12,7 +12,7 @@ export interface TimerState {
    currentTime: number; // in seconds
 }
 
-export default class Timer extends React.Component<TimerProps, any> {
+export default class Timer extends React.PureComponent<TimerProps, any> {
    interval;
 
    constructor(props) {

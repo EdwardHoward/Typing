@@ -59,11 +59,14 @@ export default class Typing extends React.Component<TypingProps, any> {
 
    onSpace = () => {
       let correct = false;
+      let wrong = this.state.wrongCount;
 
       userInput += this.state.inputValue + " ";
 
       if (this.state.inputValue.trim() === this.state.words[this.state.current].trim()) {
          correct = true;
+      }else{
+         wrong++;
       }
 
       if (!this.state.words[this.state.current + 1]) {
@@ -76,7 +79,8 @@ export default class Typing extends React.Component<TypingProps, any> {
             inputValue: '',
             test: { ...state.test, [state.current]: correct },
             currentWrong: false,
-            characterCount: state.characterCount + 1
+            characterCount: state.characterCount + 1,
+            wrongCount: wrong
          }
       });
    }
@@ -99,7 +103,10 @@ export default class Typing extends React.Component<TypingProps, any> {
       const val = e.target.value;
 
       if (val[val.length - 1] === ' ') {
-         this.onSpace();
+         // only allow space when there is a character typed
+         if(val.length > 1){
+            this.onSpace();
+         }
          return;
       }
 
@@ -110,10 +117,6 @@ export default class Typing extends React.Component<TypingProps, any> {
 
          if (this.isLetter(letter)) {
             characterCount += 1;
-         }
-
-         if (this.state.words[state.current].substring(0, val.length) !== val.trim()) {
-            wrongCount++;
          }
 
          return {
@@ -203,7 +206,7 @@ export default class Typing extends React.Component<TypingProps, any> {
                      />
                      <span className="toolbar-actions">
                         <Timer currentTime={this.state.currentTime} onFinished={this.onFinished} counting={this.state.running} onTick={this.tick} />
-                        <button onClick={this.reset}>Reset</button>
+                        <button disabled={this.state.characterCount < 1} onClick={this.reset}>Reset</button>
                      </span>
                   </div>
                </div>
