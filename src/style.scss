@@ -1,11 +1,21 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto');
 
-*,*:before,*:after{
+*,
+*:before,
+*:after {
    box-sizing: inherit;
 }
 
-body{
+body {
    box-sizing: border-box;
    font-family: 'Roboto', sans-serif;
    background: #d8d8d8;
+}
+
+.typing {
+   margin-top: 150px;
+
+   @media(max-width: 489px) {
+      margin-top: 50px;
+   }
 }

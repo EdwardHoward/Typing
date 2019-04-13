@@ -22,7 +22,8 @@ export interface TypingState {
    currentTime: number;
    wrongCount: number;
    wordsPerMinute: number;
-   words: string[]
+   words: string[];
+   showResults: boolean;
 }
 
 let userInput = "";
@@ -45,7 +46,8 @@ export default class Typing extends React.Component<TypingProps, any> {
          currentTime: 60,
          wrongCount: 0,
          wordsPerMinute: 0,
-         words: []
+         words: [],
+         showResults: false
       }
    }
 
@@ -57,11 +59,14 @@ export default class Typing extends React.Component<TypingProps, any> {
 
    onSpace = () => {
       let correct = false;
+      let wrong = this.state.wrongCount;
 
       userInput += this.state.inputValue + " ";
 
       if (this.state.inputValue.trim() === this.state.words[this.state.current].trim()) {
          correct = true;
+      }else{
+         wrong++;
       }
 
       if (!this.state.words[this.state.current + 1]) {
@@ -74,7 +79,8 @@ export default class Typing extends React.Component<TypingProps, any> {
             inputValue: '',
             test: { ...state.test, [state.current]: correct },
             currentWrong: false,
-            characterCount: state.characterCount + 1
+            characterCount: state.characterCount + 1,
+            wrongCount: wrong
          }
       });
    }
@@ -97,21 +103,20 @@ export default class Typing extends React.Component<TypingProps, any> {
       const val = e.target.value;
 
       if (val[val.length - 1] === ' ') {
-         this.onSpace();
+         // only allow space when there is a character typed
+         if(val.length > 1){
+            this.onSpace();
+         }
          return;
       }
 
       this.setState((state) => {
-         let { characterCount, wrongCount } = this.state;
+         let { characterCount, wrongCount } = state;
 
          const letter = val.substr(-1, 1);
 
          if (this.isLetter(letter)) {
             characterCount += 1;
-         }
-
-         if (this.state.words[state.current].substring(0, val.length) !== val.trim()) {
-            wrongCount++;
          }
 
          return {
@@ -136,14 +141,15 @@ export default class Typing extends React.Component<TypingProps, any> {
 
       userInput += this.state.inputValue;
 
-      let check = await this.props.client.checkWords(userInput, backspaceCount);
+      let check = await this.props.client.checkWords(userInput, backspaceCount) as any;
 
-      this.setState({wordsPerMinute: check.wpm, wrong: check.wrong});
+      this.setState({wordsPerMinute: check.wpm, wrongCount: check.wrong, showResults: true});
    }
 
    reset = async () => {
       let words = await this.props.client.getWords();
       userInput = "";
+      
       this.setState(
          {
             current: 0,
@@ -156,7 +162,8 @@ export default class Typing extends React.Component<TypingProps, any> {
             finished: false,
             currentTime: 60,
             wrongCount: 0,
-            words
+            words,
+            showResults: false
          }
       )
 
@@ -178,7 +185,7 @@ export default class Typing extends React.Component<TypingProps, any> {
    public render() {
       return (
          <div style={{ textAlign: 'center' }}>
-            <div style={{ display: 'inline-block', textAlign: 'left', transform: 'translateY(50%)', boxShadow: '1px 1px 4px #0000002b', borderRadius: "5px" }}>
+            <div className="typing" style={{ display: 'inline-block', textAlign: 'left', boxShadow: '1px 1px 4px #0000002b', borderRadius: "5px" }}>
                <div>
                   <Words
                      words={this.state.words}
@@ -199,7 +206,7 @@ export default class Typing extends React.Component<TypingProps, any> {
                      />
                      <span className="toolbar-actions">
                         <Timer currentTime={this.state.currentTime} onFinished={this.onFinished} counting={this.state.running} onTick={this.tick} />
-                        <button onClick={this.reset}>Reset</button>
+                        <button disabled={this.state.characterCount < 1} onClick={this.reset}>Reset</button>
                      </span>
                   </div>
                </div>
@@ -207,6 +214,7 @@ export default class Typing extends React.Component<TypingProps, any> {
                   keystrokes={this.state.characterCount} 
                   wrong={this.state.wrongCount} 
                   wpm={this.state.wordsPerMinute} 
+                  showing={this.state.showResults}
                />
             </div>
          </div>
