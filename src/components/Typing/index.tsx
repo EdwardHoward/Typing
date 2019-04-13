@@ -22,7 +22,8 @@ export interface TypingState {
    currentTime: number;
    wrongCount: number;
    wordsPerMinute: number;
-   words: string[]
+   words: string[];
+   showResults: boolean;
 }
 
 let userInput = "";
@@ -45,7 +46,8 @@ export default class Typing extends React.Component<TypingProps, any> {
          currentTime: 60,
          wrongCount: 0,
          wordsPerMinute: 0,
-         words: []
+         words: [],
+         showResults: false
       }
    }
 
@@ -102,7 +104,7 @@ export default class Typing extends React.Component<TypingProps, any> {
       }
 
       this.setState((state) => {
-         let { characterCount, wrongCount } = this.state;
+         let { characterCount, wrongCount } = state;
 
          const letter = val.substr(-1, 1);
 
@@ -136,14 +138,15 @@ export default class Typing extends React.Component<TypingProps, any> {
 
       userInput += this.state.inputValue;
 
-      let check = await this.props.client.checkWords(userInput, backspaceCount);
+      let check = await this.props.client.checkWords(userInput, backspaceCount) as any;
 
-      this.setState({wordsPerMinute: check.wpm, wrong: check.wrong});
+      this.setState({wordsPerMinute: check.wpm, wrongCount: check.wrong, showResults: true});
    }
 
    reset = async () => {
       let words = await this.props.client.getWords();
       userInput = "";
+      
       this.setState(
          {
             current: 0,
@@ -156,7 +159,8 @@ export default class Typing extends React.Component<TypingProps, any> {
             finished: false,
             currentTime: 60,
             wrongCount: 0,
-            words
+            words,
+            showResults: false
          }
       )
 
@@ -178,7 +182,7 @@ export default class Typing extends React.Component<TypingProps, any> {
    public render() {
       return (
          <div style={{ textAlign: 'center' }}>
-            <div style={{ display: 'inline-block', textAlign: 'left', transform: 'translateY(50%)', boxShadow: '1px 1px 4px #0000002b', borderRadius: "5px" }}>
+            <div className="typing" style={{ display: 'inline-block', textAlign: 'left', boxShadow: '1px 1px 4px #0000002b', borderRadius: "5px" }}>
                <div>
                   <Words
                      words={this.state.words}
@@ -207,6 +211,7 @@ export default class Typing extends React.Component<TypingProps, any> {
                   keystrokes={this.state.characterCount} 
                   wrong={this.state.wrongCount} 
                   wpm={this.state.wordsPerMinute} 
+                  showing={this.state.showResults}
                />
             </div>
          </div>

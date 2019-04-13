@@ -19,7 +19,7 @@
 }
 
 .correct {
-   color: #3cde3c; //#66ff66; 
+   color: #10d410;//#3cde3c; //#66ff66; 
 }
 
 input {
@@ -41,16 +41,12 @@ input {
    padding: 1rem;
    background: white;
    max-width: 800px;
-   border-top-left-radius: 4px;
-   border-top-right-radius: 4px;
 }
 
 .words-container {
    background: white;
    display: inline-block;
    border-radius: 5px;
-   border-bottom-left-radius: 0px;
-   border-bottom-right-radius: 0px;
    height: 6rem;
    overflow: hidden;
 }
