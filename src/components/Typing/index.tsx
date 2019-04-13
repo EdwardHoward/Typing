@@ -143,7 +143,7 @@ export default class Typing extends React.Component<TypingProps, any> {
 
    reset = async () => {
       let words = await this.props.client.getWords();
-
+      userInput = "";
       this.setState(
          {
             current: 0,
