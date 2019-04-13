@@ -3,11 +3,11 @@ import './typing.style';
 
 import Timer from '../Timer';
 import Words from '../Words';
-import { shuffle } from './words';
 import { Results } from '../Results';
+import IWordsClient from '../../api/words/IWordsClient';
 
 export interface TypingProps {
-   words: string
+   client: IWordsClient
 }
 
 export interface TypingState {
@@ -25,6 +25,8 @@ export interface TypingState {
    words: string[]
 }
 
+let userInput = "";
+let backspaceCount = 0;
 export default class Typing extends React.Component<TypingProps, any> {
    input;
 
@@ -43,19 +45,27 @@ export default class Typing extends React.Component<TypingProps, any> {
          currentTime: 60,
          wrongCount: 0,
          wordsPerMinute: 0,
-         words: shuffle(this.props.words.split(/\n/g))
+         words: []
       }
    }
 
-   componentDidMount() {
+   async componentDidMount() {
+      let words = await this.props.client.getWords();
+      this.setState({ words });
       this.input.focus();
    }
 
    onSpace = () => {
       let correct = false;
 
+      userInput += this.state.inputValue + " ";
+
       if (this.state.inputValue.trim() === this.state.words[this.state.current].trim()) {
          correct = true;
+      }
+
+      if (!this.state.words[this.state.current + 1]) {
+         this.onFinished();
       }
 
       this.setState(state => {
@@ -69,16 +79,21 @@ export default class Typing extends React.Component<TypingProps, any> {
       });
    }
 
-   isLetter(str, uppercase) {
-      let regex = uppercase ? /[A-Z]/g : /[a-z]/g;
+   isLetter(str) {
+      let regex = /[A-z]/g;
       const match = str.match(regex);
 
       return !!match;
    }
 
-   handleChange = (e) => {
-      if (this.state.finished) return;
+   handleKeyDown = (e) => {
+      if(e.which === 8){
+         backspaceCount++;
+      }
+   }
 
+   handleChange = async (e) => {
+      if (this.state.finished) return;
       const val = e.target.value;
 
       if (val[val.length - 1] === ' ') {
@@ -91,12 +106,8 @@ export default class Typing extends React.Component<TypingProps, any> {
 
          const letter = val.substr(-1, 1);
 
-         if (this.isLetter(letter, false)) {
+         if (this.isLetter(letter)) {
             characterCount += 1;
-         }
-
-         if (this.isLetter(letter, true)) {
-            characterCount += 2;
          }
 
          if (this.state.words[state.current].substring(0, val.length) !== val.trim()) {
@@ -114,19 +125,25 @@ export default class Typing extends React.Component<TypingProps, any> {
       });
    }
 
-   private onFinished = () => {
-      console.log(this.state.characterCount + ' keystrokes');
-      console.log(`${this.state.characterCount / 5} WPM`);
-
+   private onFinished = async () => {
       this.setState(state => {
          return {
             finished: true,
-            wordsPerMinute: Math.round(state.characterCount / 5)
+            wordsPerMinute: Math.round(state.characterCount / 5),
+            running: false
          }
       });
+
+      userInput += this.state.inputValue;
+
+      let check = await this.props.client.checkWords(userInput, backspaceCount);
+
+      this.setState({wordsPerMinute: check.wpm, wrong: check.wrong});
    }
 
-   reset = () => {
+   reset = async () => {
+      let words = await this.props.client.getWords();
+      userInput = "";
       this.setState(
          {
             current: 0,
@@ -139,7 +156,7 @@ export default class Typing extends React.Component<TypingProps, any> {
             finished: false,
             currentTime: 60,
             wrongCount: 0,
-            words: shuffle(this.props.words.split(/\n/g))
+            words
          }
       )
 
@@ -170,14 +187,15 @@ export default class Typing extends React.Component<TypingProps, any> {
                      test={this.state.test}
                   />
                   <div className="toolbar">
-                     <input 
-                        style={this.state.currentWrong ? { color: 'red' } : {}} 
-                        onChange={this.handleChange} 
-                        value={this.state.inputValue} 
+                     <input
+                        style={this.state.currentWrong ? { color: 'red' } : {}}
+                        onChange={this.handleChange}
+                        value={this.state.inputValue}
                         ref={this.saveInput}
                         autoCorrect="off"
                         autoCapitalize="off"
                         spellCheck={false}
+                        onKeyDown={this.handleKeyDown}
                      />
                      <span className="toolbar-actions">
                         <Timer currentTime={this.state.currentTime} onFinished={this.onFinished} counting={this.state.running} onTick={this.tick} />
