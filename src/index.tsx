@@ -5,13 +5,25 @@ import { Provider } from 'react-redux';
 import reducers from './redux/reducers';
 import Typing from './components/Typing';
 import './style';
-import { WordList } from './components/Typing/words';
+import { WordList } from './api/words/MockClient/words';
+import MockWordsClient from './api/words/MockClient';
+import IWordsClient from './api/words/IWordsClient';
+import APIWordsClient from './api/words/ApiClient';
 
 const store = createStore(reducers);
 
+let client: IWordsClient;
+
+
+if(process.env.SERVICE_TYPE === "api"){
+   client = new APIWordsClient();
+}else{
+   client = new MockWordsClient();
+}
+
 ReactDOM.render(
    <Provider store={store}>
-      <Typing words={WordList} />
+      <Typing client={client} />
    </Provider>, 
    document.getElementById('root')
 );
