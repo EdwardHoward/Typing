@@ -14,7 +14,7 @@ export interface TypingState {
    current: number;
    inputValue: string;
    typedCount: number;
-   test: boolean[];
+   correctWords: boolean[];
    currentWrong: boolean;
    characterCount: number;
    running: boolean;
@@ -38,7 +38,7 @@ export default class Typing extends React.Component<TypingProps, any> {
          current: 0,
          inputValue: '',
          typedCount: 0,
-         test: [],
+         correctWords: [],
          currentWrong: false,
          characterCount: 0,
          running: false,
@@ -77,7 +77,7 @@ export default class Typing extends React.Component<TypingProps, any> {
          return {
             current: state.current + 1,
             inputValue: '',
-            test: { ...state.test, [state.current]: correct },
+            correctWords: { ...state.correctWords, [state.current]: correct },
             currentWrong: false,
             characterCount: state.characterCount + 1,
             wrongCount: wrong
@@ -155,7 +155,7 @@ export default class Typing extends React.Component<TypingProps, any> {
             current: 0,
             inputValue: '',
             typedCount: 0,
-            test: [],
+            correctWords: [],
             currentWrong: false,
             characterCount: 0,
             running: false,
@@ -191,7 +191,7 @@ export default class Typing extends React.Component<TypingProps, any> {
                      words={this.state.words}
                      current={this.state.current}
                      currentWrong={this.state.currentWrong}
-                     test={this.state.test}
+                     correctWords={this.state.correctWords}
                   />
                   <div className="toolbar">
                      <input

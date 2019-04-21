@@ -1,74 +1,68 @@
 import * as React from 'react';
+import { useEffect, useState, useRef, useImperativeHandle } from 'react';
+import Word from './Word';
 
-export interface WordsProps {
-   words;
-   current;
-   currentWrong: Boolean;
-   test: Boolean[];
-}
+export default function Words(props) {
+   const { currentWrong, correctWords, words } = props;
 
-export default class Words extends React.Component<WordsProps, any> {
-   currentNode;
+   const [rowWordCount, setRowWordCount] = useState(0);
+   const [wordCount, setWordCount] = useState(0);
 
-   constructor(props) {
-      super(props);
+   const currentWord = useRef(null);
 
-      this.state = {
-         currentRow: 0
+   useEffect(() => {
+      setRowWordCount(rowWordCount + 1);
+
+      if (props.current == 0) {
+         setWordCount(0);
+         setRowWordCount(0);
       }
-   }
+      
+   }, [props.current]);
 
-   componentDidUpdate(prevProps: any, prevState: any) {
-      if (this.currentNode) {
-         const row = this.currentNode.offsetTop / 45;
-         if (this.state.currentRow !== row) {
-            this.setState({
-               currentRow: row
-            })
-         }
+   useEffect(() => {
+      const { current } = currentWord;
+
+      if (current && current.offsetTop !== 0) {
+         setWordCount(wordCount + rowWordCount);
+         setRowWordCount(0);
       }
+
+   }, [currentWord.current]);
+
+   function renderWords(words) {
+      if (words) {
+         return words.slice(wordCount, wordCount + 30).map((word, index) => {
+
+            const realIndex = index + wordCount;
+            const current = (realIndex === props.current);
+            const correct = correctWords[realIndex];
+
+            return (
+               <Word
+                  word={word}
+                  currentWrong={currentWrong}
+                  correct={correct}
+                  key={realIndex}
+                  index={realIndex}
+                  selected={current}
+                  ref={current ? currentWord : null}
+               />
+            )
+         });
+      }
+
+      return null;
    }
 
-   shouldComponentUpdate(prevProps: WordsProps, prevState: any) {
-      return (
-         prevProps.current !== this.props.current ||
-         prevState.currentRow !== this.state.currentRow ||
-         prevProps.currentWrong !== this.props.currentWrong ||
-         prevProps.words !== this.props.words);
-   }
 
-   saveCurrentSpan = (node) => {
-      this.currentNode = node;
-   }
-
-   renderWord = (word, index) => {
-      const {  currentWrong, test } = this.props;
-      const current = (index === this.props.current);
-
-      return (
-         <span key={index} ref={current ? this.saveCurrentSpan : null}
-            className={
-               'word' +
-               (current ? (' current' + (currentWrong ? ' error' : '')) : '') +
-               (test[index] === true ? ' correct' : '') +
-               (test[index] === false ? ' wrong' : '')
-            }>
-            {word}
-         </span>
-      )
-   }
-
-   public render() {
-      const { words } = this.props;
-
-      return (
-         <div className="words-wrapper">
-            <div className="words-container">
-               <div className="words" style={{ top: (this.state.currentRow * -45) + 'px' }}>
-                  {words && words.map(this.renderWord)}
-               </div>
+   return (
+      <div className="words-wrapper">
+         <div className="words-container">
+            <div className="words">
+               {renderWords(words)}
             </div>
          </div>
-      );
-   }
+      </div>
+   );
 }
