@@ -10,26 +10,31 @@ export interface ResultsProps {
 }
 
 function Box(props) {
-   const { style, title, textClass, valueStyle, value } = props;
+   const { style, title, textClass, valueStyle, value, boxClass } = props;
    return (
-      <div className="box" style={style}>
+      <div className={"box " + (boxClass ? boxClass : "")} style={style}>
          <div style={{ padding: '0.5rem' }}>{title}</div>
-         <div className={textClass} style={valueStyle}>{value}</div>
+         <div className={textClass ? textClass : ""} style={valueStyle}>{value}</div>
       </div>
    )
 }
 
+function WPMText(wpm) {
+   return wpm + (wpm > 120 ? " 🔥🔥" : "");
+}
+
 function ResultView(props) {
-   const { showing, keystrokes, wpm, wrong } = props;
-   return (<div className="p-1" style={{ display: 'flex', flexWrap: 'wrap', backgroundColor: '#e0e0e0' }}>
-      <Box style={{ backgroundColor: 'whitesmoke' }} title="Keystrokes" value={keystrokes} textClass="correct" valueStyle={{ padding: '.5rem' }} />
-      <Box style={{ backgroundColor: 'whitesmoke' }} title="Wrong Words" value={wrong} textClass="wrong" valueStyle={{ padding: '.5rem' }} />
-      <Box title={showing ? "WPM" : null} value={showing ? (wpm + (wpm > 120 ? "🔥🔥" : "")) : ''} valueStyle={{ padding: '.2rem', fontSize: '1.3rem' }} />
-   </div>);
+   const { keystrokes, wpm, wrong } = props;
+   return (
+      <div className="p-1 result-box" style={{ display: 'flex', flexWrap: 'wrap'}}>
+         <Box title="WPM" value={WPMText(wpm)} valueStyle={{ padding: '.2rem', fontSize: '1.3rem' }} />
+         <Box title="Keystrokes" boxClass="wpm" value={keystrokes} textClass="correct" valueStyle={{ padding: '.5rem' }} />
+         <Box title="Wrong Words" boxClass="wpm" value={wrong} textClass="wrong" valueStyle={{ padding: '.5rem' }} />
+      </div>);
 }
 
 export function Results(props: ResultsProps) {
-   
+
    return (props.showing ? <ResultView {...props} /> : null);
 
 }
