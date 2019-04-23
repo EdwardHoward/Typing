@@ -12,9 +12,9 @@ export interface ResultsProps {
 function Box(props) {
    const { style, title, textClass, valueStyle, value, boxClass } = props;
    return (
-      <div className={"box " + boxClass} style={style}>
+      <div className={"box " + (boxClass ? boxClass : "")} style={style}>
          <div style={{ padding: '0.5rem' }}>{title}</div>
-         <div className={textClass} style={valueStyle}>{value}</div>
+         <div className={textClass ? textClass : ""} style={valueStyle}>{value}</div>
       </div>
    )
 }
