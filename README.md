@@ -22,4 +22,5 @@ Server runs at
     http://localhost:8080
 
 Test Project
+
    npm test
